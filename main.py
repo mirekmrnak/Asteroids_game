@@ -5,9 +5,7 @@ Má být - na Spaceship volat skrz všechny objetky hit_by_spaceship a každý o
 nemá být - na Meteoru se vola skrz vsechny objekty hit_by_laser
 '''
 
-
 # Screen size (in pixels)
-from tkinter import LEFT
 from turtle import width
 import pyglet
 import math
@@ -28,9 +26,9 @@ classes_in_game = set() # set of classes in game - for check, if in the game is 
 
 # List of PNG pictures
 batch = pyglet.graphics.Batch()
-from pngs import spaceships_pngs, meteor_pngs, laser, wallpaper
+from pngs import spaceships_pngs, meteor_pngs, laser, wallpaper #all PNGs imported
 
-#collision and distances checks between circles
+#collision and distances checks between circles - just math :-)
 def distance(a, b, wrap_size):
     """Distance in one direction (x or y)"""
     result = abs(a - b)
@@ -45,6 +43,7 @@ def overlaps(a, b):
     max_distance_squared = (a.radius + b.radius) ** 2
     return distance_squared < max_distance_squared
 
+#here start all the classes
 class SpaceObject:
     def __init__(self, picture):
         self.x = 0
@@ -241,6 +240,7 @@ class Level:
         print(classes_in_game)
         classes_in_game.clear()
 
+#here are all the functions for game defined
 def stisk_klavesy(symbol, modifikatory):
     if symbol == pyglet.window.key.UP:
         stisknute_klavesy.add('nahoru')
@@ -265,6 +265,7 @@ def pusteni_klavesy(symbol, modifikatory):
     if symbol == pyglet.window.key.SPACE:
         stisknute_klavesy.discard('space')
 
+#here are functions for drawing on the screen
 def nakresli_text(text, x, y, pozice_x):
     """Draw the text in added position
 
@@ -326,7 +327,7 @@ def vykresli():
             gl.glPopMatrix()
     
     #draw score and lifes
-    nakresli_text(f'Level {level.level}', 20, 20, LEFT)
+    nakresli_text(f'Level {level.level}', 20, 20, 'left')
     nakresli_skore()
 
 ship_pic = choice(spaceships_pngs)
