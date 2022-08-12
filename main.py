@@ -61,7 +61,7 @@ def pusteni_klavesy(symbol, modifikatory):
         stisknute_klavesy.discard('space')
 
 #here are functions for drawing on the screen
-def nakresli_text(text, x, y, pozice_x):
+def nakresli_text(text, x, y, velikost, pozice_x):
     """Draw the text in added position
 
     Arg ``pozice_x`` is "left" or "right", defines the text aligment
@@ -69,7 +69,7 @@ def nakresli_text(text, x, y, pozice_x):
     napis = pyglet.text.Label(
         text,
         font_name='Impact',
-        font_size=22,
+        font_size=velikost,
         x=x, y=y, anchor_x=pozice_x
     )
     napis.draw()
@@ -122,8 +122,10 @@ def vykresli():
             gl.glPopMatrix()
     
     #draw score and lifes
-    nakresli_text(f'Level {level.level}', 20, 20, 'left')
+    nakresli_text(f'Level {level.level}', 20, 20, 22, 'left')
     nakresli_skore()
+    if ship.lifes == 0:
+        nakresli_text('Game over', 450, 300, 120, 'center')
 
 #here start all the classes
 class SpaceObject:
@@ -307,7 +309,11 @@ class Level:
     
     def tick(self, dt):
         if ship.lifes == 0:
-            pass
+            try:
+                ship.delete()
+            except ValueError:
+                pass
+
         for object in objects:
             classes_in_game.add(str(object))
         if "Meteor" not in classes_in_game:
@@ -323,7 +329,6 @@ ship = Spaceship(ship_pic)
 objects.append(ship)
 level = Level()
 level.create_asteroids()
-
 
 window = pyglet.window.Window(width=WIDTH, height=HEIGHT)
 
