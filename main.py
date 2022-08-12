@@ -1,3 +1,9 @@
+'''
+TODO:
+1. 3 Classy pro 3 velikosti asteroidu --> když rostřelíš velký, stanou se z něj tři menší
+2. Fce 'restart'
+3. Fce 'pauza'
+'''
 from turtle import width
 import pyglet
 import math
@@ -47,6 +53,8 @@ def stisk_klavesy(symbol, modifikatory):
         stisknute_klavesy.add('left')
     if symbol == pyglet.window.key.SPACE:
         stisknute_klavesy.add('space')
+    if symbol == pyglet.window.key.R:
+        stisknute_klavesy.add('reset')
 
 def pusteni_klavesy(symbol, modifikatory):
     if symbol == pyglet.window.key.UP:
@@ -59,6 +67,8 @@ def pusteni_klavesy(symbol, modifikatory):
         stisknute_klavesy.discard('left')
     if symbol == pyglet.window.key.SPACE:
         stisknute_klavesy.discard('space')
+    if symbol == pyglet.window.key.R:
+        stisknute_klavesy.discard('reset')
 
 #here are functions for drawing on the screen
 def nakresli_text(text, x, y, velikost, pozice_x):
@@ -313,6 +323,9 @@ class Level:
                 ship.delete()
             except ValueError:
                 pass
+
+        if ('reset') in stisknute_klavesy:
+            pass
 
         for object in objects:
             classes_in_game.add(str(object))
