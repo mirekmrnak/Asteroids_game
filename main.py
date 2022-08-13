@@ -3,7 +3,6 @@ TODO:
 2. Fce 'restart'
 3. Fce 'pauza'
 '''
-from turtle import width
 import pyglet
 import math
 from random import randrange, choice, uniform
@@ -21,8 +20,8 @@ objects = [] #list of all objects in game
 stisknute_klavesy = set()  # set of pressed keys
 
 # List of PNG pictures
-batch = pyglet.graphics.Batch()
 from pngs import spaceships_pngs, meteor_big_pngs, meteor_med_pngs, meteor_small_pngs, laser, wallpaper #all PNGs imported
+batch = pyglet.graphics.Batch()
 
 #collision and distances checks between circles - just math :-)
 def distance(a, b, wrap_size):
@@ -144,9 +143,6 @@ class SpaceObject:
         self.y_speed = 0
         self.rotation = 0
         self.sprite = pyglet.sprite.Sprite(picture, batch=batch)
-    
-    def __str__(self):
-        return self.name
 
     def tick(self, dt):
         #object mechanic
@@ -355,9 +351,7 @@ class Level:
             pass
         
         #check, if there are any asteroids --> if no --> next level
-        if any(map(lambda n: isinstance(n, Meteor), objects)):
-            pass #in list objects is an Asteroid
-        else: #in list objects are any asteroids 
+        if not any(map(lambda n: isinstance(n, Meteor), objects)):
             self.level += 1 
             for object in objects:
                 object.reset()           
