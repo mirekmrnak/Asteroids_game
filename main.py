@@ -19,7 +19,6 @@ ACCELERATION = 250
 
 objects = [] #list of all objects in game
 stisknute_klavesy = set()  # set of pressed keys
-classes_in_game = set() # set of classes in game - for check, if in the game is stil an asteroid, laser etc. 
 
 # List of PNG pictures
 batch = pyglet.graphics.Batch()
@@ -139,7 +138,6 @@ def vykresli():
 #here start all the classes
 class SpaceObject:
     def __init__(self, picture):
-        self.name = "spaceobject"
         self.x = 0
         self.y = 0
         self.x_speed = 0
@@ -194,7 +192,6 @@ class SpaceObject:
 class Spaceship(SpaceObject):
     def __init__(self, picture):
         super().__init__(picture)
-        self.name = "Spaceship"
         self.x = WIDTH / 2
         self.y = HEIGHT / 2
         self.lifes = 3
@@ -240,6 +237,13 @@ class Spaceship(SpaceObject):
         if self.y_speed < -500:
             self.y_speed = -500
         
+        #GameOver check
+        if ship.lifes == 0:
+            try:
+                ship.delete()
+            except ValueError:
+                pass
+
         #collison check with other objects
         #if collision, method "hit_by_spaceship" on each object called --> argument spaceship given --> each object decides what to do
         for object in objects:
@@ -249,7 +253,6 @@ class Spaceship(SpaceObject):
 class Meteor(SpaceObject):
     def __init__(self, picture):
         super().__init__(picture)
-        self.name = "Meteor"
         self.x = randrange(0, WIDTH)
         self.y = randrange(0, HEIGHT)
         self.x_speed = randrange(10, 150)
@@ -280,7 +283,6 @@ class Meteor(SpaceObject):
 class MeteorBig(Meteor):
     def __init__(self, picture):
         super().__init__(picture)
-        self.name = "Meteor_Big"
         self.radius = 50
     
     def big_bang(self):
@@ -291,7 +293,6 @@ class MeteorBig(Meteor):
 class MeteorMed(Meteor):
     def __init__(self, picture, x, y):
         super().__init__(picture)
-        self.name = "Meteor_Med"
         self.radius = 25
         self.x = x
         self.y = y
@@ -304,7 +305,6 @@ class MeteorMed(Meteor):
 class MeteorSmall(Meteor):
     def __init__(self, picture, x, y):
         super().__init__(picture)
-        self.name = "Meteor_Small"
         self.radius = 10
         self.x = x
         self.y = y
@@ -315,7 +315,6 @@ class MeteorSmall(Meteor):
 class Laser(SpaceObject):
     def __init__(self, picture, x, y, rot):
         super().__init__(picture)
-        self.name = "Laser"
         self.x = x
         self.y = y
         self.rotation = rot
@@ -352,13 +351,6 @@ class Level:
             objects.append(MeteorBig(choice(meteor_big_pngs)))
     
     def tick(self, dt):
-        #Game Over 
-        if ship.lifes == 0:
-            try:
-                ship.delete()
-            except ValueError:
-                pass
-
         if ('reset') in stisknute_klavesy:
             pass
         
