@@ -363,10 +363,9 @@ class Level:
             pass
         
         #check, if there are any asteroids --> if no --> next level
-        for object in objects:
-            if 'Meteor' in object.name:
-                break
-        else:
+        if any(map(lambda n: isinstance(n, Meteor), objects)):
+            pass #in list objects is an Asteroid
+        else: #in list objects are any asteroids 
             self.level += 1 
             for object in objects:
                 object.reset()           
