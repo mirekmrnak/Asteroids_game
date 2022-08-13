@@ -352,6 +352,7 @@ class Level:
             objects.append(MeteorBig(choice(meteor_big_pngs)))
     
     def tick(self, dt):
+        #Game Over 
         if ship.lifes == 0:
             try:
                 ship.delete()
@@ -360,22 +361,16 @@ class Level:
 
         if ('reset') in stisknute_klavesy:
             pass
-
+        
+        #check, if there are any asteroids --> if no --> next level
         for object in objects:
-            classes_in_game.add(str(object))
-
-        #check, if any Meteors are still in the game
-        for object in classes_in_game:
-            if "Meteor" in object:
+            if 'Meteor' in object.name:
                 break
         else:
             self.level += 1 
             for object in objects:
                 object.reset()           
             self.create_asteroids()
-
-        print(classes_in_game)
-        classes_in_game.clear()
 
 ship_pic = choice(spaceships_pngs)
 ship = Spaceship(ship_pic)
