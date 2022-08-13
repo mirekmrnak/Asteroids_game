@@ -1,6 +1,5 @@
 '''
 TODO:
-1. 3 Classy pro 3 velikosti asteroidu --> když rostřelíš velký, stanou se z něj tři menší
 2. Fce 'restart'
 3. Fce 'pauza'
 '''
@@ -24,7 +23,7 @@ classes_in_game = set() # set of classes in game - for check, if in the game is 
 
 # List of PNG pictures
 batch = pyglet.graphics.Batch()
-from pngs import spaceships_pngs, meteor_pngs, laser, wallpaper #all PNGs imported
+from pngs import spaceships_pngs, meteor_big_pngs, meteor_med_pngs, meteor_small_pngs, laser, wallpaper #all PNGs imported
 
 #collision and distances checks between circles - just math :-)
 def distance(a, b, wrap_size):
@@ -204,6 +203,8 @@ class Spaceship(SpaceObject):
         self.attack_time = 0.5
 
     def reset(self):
+        self.x_speed = 0
+        self.y_speed = 0
         self.x = WIDTH / 2
         self.y = HEIGHT / 2
         self.immortality_time = 3
@@ -270,13 +271,46 @@ class Meteor(SpaceObject):
     
     def hit_by_spaceship(self, ship):
         if ship.immortality_time < 0:
-            ship.x_speed = 0
-            ship.y_speed = 0
-            ship.rotation = 0
-            ship.x = WIDTH / 2
-            ship.y = HEIGHT / 2
             ship.lifes -= 1
-            ship.immortality_time = 3
+            ship.reset()
+    
+    def big_bang(self):
+        pass
+
+class MeteorBig(Meteor):
+    def __init__(self, picture):
+        super().__init__(picture)
+        self.name = "Meteor_Big"
+        self.radius = 50
+    
+    def big_bang(self):
+        for i in range(3):
+            objects.append(MeteorMed(choice(meteor_med_pngs), self.x, self.y))
+        self.delete()
+
+class MeteorMed(Meteor):
+    def __init__(self, picture, x, y):
+        super().__init__(picture)
+        self.name = "Meteor_Med"
+        self.radius = 25
+        self.x = x
+        self.y = y
+
+    def big_bang(self):
+        for i in range(3):
+            objects.append(MeteorSmall(choice(meteor_small_pngs), self.x, self.y))
+        self.delete()
+
+class MeteorSmall(Meteor):
+    def __init__(self, picture, x, y):
+        super().__init__(picture)
+        self.name = "Meteor_Small"
+        self.radius = 10
+        self.x = x
+        self.y = y
+    
+    def big_bang(self):
+        self.delete()
 
 class Laser(SpaceObject):
     def __init__(self, picture, x, y, rot):
@@ -306,7 +340,7 @@ class Laser(SpaceObject):
             self.delete()
     
     def hit_by_meteor(self, meteor):
-        meteor.delete()
+        meteor.big_bang()
         self.delete()
 
 class Level:
@@ -314,8 +348,8 @@ class Level:
         self.level = 1
 
     def create_asteroids(self):
-        for i in range(self.level * 3):
-            objects.append(Meteor(meteor_pngs[randrange(10)]))
+        for i in range(self.level):
+            objects.append(MeteorBig(choice(meteor_big_pngs)))
     
     def tick(self, dt):
         if ship.lifes == 0:
@@ -329,11 +363,17 @@ class Level:
 
         for object in objects:
             classes_in_game.add(str(object))
-        if "Meteor" not in classes_in_game:
+
+        #check, if any Meteors are still in the game
+        for object in classes_in_game:
+            if "Meteor" in object:
+                break
+        else:
             self.level += 1 
             for object in objects:
                 object.reset()           
             self.create_asteroids()
+
         print(classes_in_game)
         classes_in_game.clear()
 
