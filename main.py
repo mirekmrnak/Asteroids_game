@@ -1,6 +1,5 @@
 '''
 TODO:
-2. Fce 'restart'
 3. Fce 'pauza'
 '''
 import pyglet
@@ -51,7 +50,7 @@ def stisk_klavesy(symbol, modifikatory):
     if symbol == pyglet.window.key.SPACE:
         stisknute_klavesy.add('space')
     if symbol == pyglet.window.key.R:
-        stisknute_klavesy.add('reset')
+        reset()
 
 def pusteni_klavesy(symbol, modifikatory):
     if symbol == pyglet.window.key.UP:
@@ -64,8 +63,6 @@ def pusteni_klavesy(symbol, modifikatory):
         stisknute_klavesy.discard('left')
     if symbol == pyglet.window.key.SPACE:
         stisknute_klavesy.discard('space')
-    if symbol == pyglet.window.key.R:
-        stisknute_klavesy.discard('reset')
 
 #here are functions for drawing on the screen
 def nakresli_text(text, x, y, velikost, pozice_x):
@@ -131,6 +128,7 @@ def vykresli():
     #draw score and lifes
     nakresli_text(f'Level {level.level}', 20, 20, 22, 'left')
     nakresli_skore()
+    nakresli_text('R - reset', 880, 20, 16, 'right')
     if ship.lifes == 0:
         nakresli_text('Game over', 450, 300, 120, 'center')
 
@@ -362,6 +360,19 @@ ship = Spaceship(ship_pic)
 objects.append(ship)
 level = Level()
 level.create_asteroids()
+
+def reset():
+    #set level 1, create one big Meteor and delete the rest in list objects
+    global ship, objects
+    level.level = 1
+    objects.append(MeteorBig(choice(meteor_big_pngs)))
+    #ship needs to be created in case of Game Over --> no ship in the objects list
+    ship = Spaceship(ship_pic)
+    objects[0] = ship
+    
+    #delete all except ship on pos[0] and the big meteor on pos[-1]
+    for object in objects[1:-1]:
+        object.delete()
 
 window = pyglet.window.Window(width=WIDTH, height=HEIGHT)
 
